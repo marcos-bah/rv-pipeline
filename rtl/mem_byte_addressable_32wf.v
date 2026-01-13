@@ -48,9 +48,9 @@ memory_write_first #(.DATA_WIDTH(8), .ADDRESS_WIDTH(4)) mem_byte3
     // Inicialização dos dados
 initial begin
     // Carregar dados de inicialização separados para cada byte de memória
-    $readmemh("/home/marcosbarbosa/Documents/verilog/RISC_pipeline-RISC_FPU/mem/mem_byte0_init.txt", mem_byte0.mem);  // Arquivo de inicialização para o byte 0
-    $readmemh("/home/marcosbarbosa/Documents/verilog/RISC_pipeline-RISC_FPU/mem/mem_byte1_init.txt", mem_byte1.mem);  // Arquivo de inicialização para o byte 1
-    $readmemh("/home/marcosbarbosa/Documents/verilog/RISC_pipeline-RISC_FPU/mem/mem_byte2_init.txt", mem_byte2.mem);  // Arquivo de inicialização para o byte 2
-    $readmemh("/home/marcosbarbosa/Documents/verilog/RISC_pipeline-RISC_FPU/mem/mem_byte3_init.txt", mem_byte3.mem);  // Arquivo de inicialização para o byte 3
+    $readmemh("/home/marcosbarbosa/Documents/verilog/rv-pipeline/mem/mem_byte0_init.txt", mem_byte0.mem);  // Arquivo de inicialização para o byte 0
+    $readmemh("/home/marcosbarbosa/Documents/verilog/rv-pipeline/mem/mem_byte1_init.txt", mem_byte1.mem);  // Arquivo de inicialização para o byte 1
+    $readmemh("/home/marcosbarbosa/Documents/verilog/rv-pipeline/mem/mem_byte2_init.txt", mem_byte2.mem);  // Arquivo de inicialização para o byte 2
+    $readmemh("/home/marcosbarbosa/Documents/verilog/rv-pipeline/mem/mem_byte3_init.txt", mem_byte3.mem);  // Arquivo de inicialização para o byte 3
 end
 endmodule

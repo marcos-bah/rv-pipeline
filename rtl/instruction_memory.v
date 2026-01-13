@@ -146,7 +146,7 @@ initial begin
     //instruction [21] = 32'hf00502d3; // fmvw.x f5, x10 pega x10 e coloca em f5
 end
 
-initial begin $readmemh("/home/marcosbarbosa/Documents/verilog/RISC_pipeline-RISC_FPU/programs/instructions.txt", instruction_memory.instruction); end
+initial begin $readmemh("/home/marcosbarbosa/Documents/verilog/rv-pipeline/programs/instructions.txt", instruction_memory.instruction); end
 
 always @ (*)
 begin
