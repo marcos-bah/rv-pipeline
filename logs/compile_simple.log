@@ -1,0 +1,70 @@
+rtl/adder.v:1: warning: timescale for adder inherited from another file.
+rtl/tb/topo_simple_tb.v:4: ...: The inherited timescale is here.
+rtl/alu.v:1: warning: timescale for ALU inherited from another file.
+rtl/tb/topo_simple_tb.v:4: ...: The inherited timescale is here.
+rtl/byte_enable_decoder.v:1: warning: timescale for byteEnableDecoder inherited from another file.
+rtl/tb/topo_simple_tb.v:4: ...: The inherited timescale is here.
+rtl/control_unit.v:1: warning: timescale for Control_Unit inherited from another file.
+rtl/tb/topo_simple_tb.v:4: ...: The inherited timescale is here.
+rtl/data_memory.v:3: warning: timescale for data_memory inherited from another file.
+rtl/tb/topo_simple_tb.v:4: ...: The inherited timescale is here.
+rtl/execute_memory.v:1: warning: timescale for Execute_Memory inherited from another file.
+rtl/tb/topo_simple_tb.v:4: ...: The inherited timescale is here.
+rtl/forwarding_unit.v:1: warning: timescale for Forwarding_Unit inherited from another file.
+rtl/tb/topo_simple_tb.v:4: ...: The inherited timescale is here.
+rtl/fp2int.v:1: warning: timescale for fp2int inherited from another file.
+rtl/tb/topo_simple_tb.v:4: ...: The inherited timescale is here.
+rtl/fpu_decoder.v:1: warning: timescale for FPU_Decoder inherited from another file.
+rtl/tb/topo_simple_tb.v:4: ...: The inherited timescale is here.
+rtl/fpu.v:5: warning: timescale for FPU inherited from another file.
+rtl/tb/topo_simple_tb.v:4: ...: The inherited timescale is here.
+rtl/instruction_decode.v:1: warning: timescale for InstructionDecode inherited from another file.
+rtl/tb/topo_simple_tb.v:4: ...: The inherited timescale is here.
+rtl/instruction_fetch.v:1: warning: timescale for InstructionFetch inherited from another file.
+rtl/tb/topo_simple_tb.v:4: ...: The inherited timescale is here.
+rtl/instruction_memory.v:1: warning: timescale for instruction_memory inherited from another file.
+rtl/tb/topo_simple_tb.v:4: ...: The inherited timescale is here.
+rtl/int2fp.v:1: warning: timescale for int2fp inherited from another file.
+rtl/tb/topo_simple_tb.v:4: ...: The inherited timescale is here.
+rtl/main_decoder.v:1: warning: timescale for Main_Decoder inherited from another file.
+rtl/tb/topo_simple_tb.v:4: ...: The inherited timescale is here.
+rtl/mem_byte_addressable_32wf.v:1: warning: timescale for memByteAddressable32WF inherited from another file.
+rtl/tb/topo_simple_tb.v:4: ...: The inherited timescale is here.
+rtl/memory_write_first.v:1: warning: timescale for memory_write_first inherited from another file.
+rtl/tb/topo_simple_tb.v:4: ...: The inherited timescale is here.
+rtl/mem_read_manager.v:1: warning: timescale for memReadManager inherited from another file.
+rtl/tb/topo_simple_tb.v:4: ...: The inherited timescale is here.
+rtl/mem_topo_little_endian.v:1: warning: timescale for memTopo32LittleEndian inherited from another file.
+rtl/tb/topo_simple_tb.v:4: ...: The inherited timescale is here.
+rtl/multiply.v:1: warning: timescale for multiply inherited from another file.
+rtl/tb/topo_simple_tb.v:4: ...: The inherited timescale is here.
+rtl/mux_2x1_32bits.v:1: warning: timescale for mux2x1_32bits inherited from another file.
+rtl/tb/topo_simple_tb.v:4: ...: The inherited timescale is here.
+rtl/mux_3x1_32bits.v:1: warning: timescale for mux3x1_32bits inherited from another file.
+rtl/tb/topo_simple_tb.v:4: ...: The inherited timescale is here.
+rtl/pc.v:1: warning: timescale for PC inherited from another file.
+rtl/tb/topo_simple_tb.v:4: ...: The inherited timescale is here.
+rtl/register_file.v:3: warning: timescale for register_file inherited from another file.
+rtl/tb/topo_simple_tb.v:4: ...: The inherited timescale is here.
+rtl/register_file_x.v:3: warning: timescale for register_fileX inherited from another file.
+rtl/tb/topo_simple_tb.v:4: ...: The inherited timescale is here.
+rtl/sign_extend.v:1: warning: timescale for SignExtend inherited from another file.
+rtl/tb/topo_simple_tb.v:4: ...: The inherited timescale is here.
+rtl/topo.v:1: warning: timescale for topo inherited from another file.
+rtl/tb/topo_simple_tb.v:4: ...: The inherited timescale is here.
+rtl/topo.v:59: warning: implicit definition of wire 'WEFWIRE2'.
+rtl/topo.v:126: warning: implicit definition of wire 'ASWIRE'.
+rtl/topo.v:191: warning: implicit definition of wire 'ALUResult'.
+rtl/ula_decoder.v:1: warning: timescale for ULA_Decoder inherited from another file.
+rtl/tb/topo_simple_tb.v:4: ...: The inherited timescale is here.
+rtl/register_file_x.v:60: warning: @* is sensitive to all 32 words in array 'register'.
+rtl/register_file_x.v:61: warning: @* is sensitive to all 32 words in array 'register'.
+rtl/instruction_memory.v:153: warning: @* is sensitive to all 64 words in array 'instruction'.
+rtl/register_file.v:60: warning: @* is sensitive to all 32 words in array 'register'.
+rtl/register_file.v:61: warning: @* is sensitive to all 32 words in array 'register'.
+rtl/register_file.v:60: warning: @* is sensitive to all 32 words in array 'register'.
+rtl/register_file.v:61: warning: @* is sensitive to all 32 words in array 'register'.
+rtl/memory_write_first.v:19: warning: @* is sensitive to all 16 words in array 'mem'.
+rtl/memory_write_first.v:19: warning: @* is sensitive to all 16 words in array 'mem'.
+rtl/memory_write_first.v:19: warning: @* is sensitive to all 16 words in array 'mem'.
+rtl/memory_write_first.v:19: warning: @* is sensitive to all 16 words in array 'mem'.

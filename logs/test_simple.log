@@ -1,0 +1,29 @@
+WARNING: rtl/instruction_memory.v:149: $readmemh(/home/marcosbarbosa/Documents/verilog/RISC_pipeline-RISC_FPU/programs/instructions.txt): Not enough words in the file for the requested range [0:63].
+WARNING: rtl/mem_byte_addressable_32wf.v:51: $readmemh(/home/marcosbarbosa/Documents/verilog/RISC_pipeline-RISC_FPU/mem/mem_byte0_init.txt): Not enough words in the file for the requested range [0:15].
+WARNING: rtl/mem_byte_addressable_32wf.v:52: $readmemh(/home/marcosbarbosa/Documents/verilog/RISC_pipeline-RISC_FPU/mem/mem_byte1_init.txt): Not enough words in the file for the requested range [0:15].
+WARNING: rtl/mem_byte_addressable_32wf.v:53: $readmemh(/home/marcosbarbosa/Documents/verilog/RISC_pipeline-RISC_FPU/mem/mem_byte2_init.txt): Not enough words in the file for the requested range [0:15].
+WARNING: rtl/mem_byte_addressable_32wf.v:54: $readmemh(/home/marcosbarbosa/Documents/verilog/RISC_pipeline-RISC_FPU/mem/mem_byte3_init.txt): Not enough words in the file for the requested range [0:15].
+
+========================================
+   VALIDACAO DO PIPELINE RISC-V
+========================================
+
+[OK] x5 = 0x0001199a
+[OK] x6 = 0x00028000
+[OK] x7 = 0xfffc4000 (resultado da soma)
+[OK] 9 escritas no register file
+
+========================================
+  RESULTADO: PIPELINE FUNCIONANDO!
+========================================
+
+  ██████╗ ██╗  ██╗
+ ██╔═══██╗██║ ██╔╝
+ ██║   ██║█████╔╝ 
+ ██║   ██║██╔═██╗ 
+ ╚██████╔╝██║  ██╗
+  ╚═════╝ ╚═╝  ╚═╝
+
+========================================
+
+rtl/tb/topo_simple_tb.v:128: $finish called at 515000 (1ps)

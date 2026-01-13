@@ -1,0 +1,2 @@
+rtl/forwarding_unit.v:1: warning: timescale for Forwarding_Unit inherited from another file.
+rtl/tb/forwarding_unit_tb.v:1: ...: The inherited timescale is here.
