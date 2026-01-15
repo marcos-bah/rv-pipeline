@@ -19,10 +19,12 @@ module register_file #(
 
 reg [31:0] register [0:31]; // 32 registradores de 32 bits
 
-// Inicialização
+`ifndef SYNTHESIS
+// Inicialização apenas para simulação
 initial begin
     register[0] = 32'h0;
 end
+`endif
 
 // Escrita síncrona
 always @(posedge clk) begin

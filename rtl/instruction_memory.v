@@ -1,17 +1,32 @@
 module instruction_memory (
     input [31:0] A, // Endereço
-    output reg [31:0] RD // Barramento de elitura de dados
+    output [31:0] RD // Barramento de leitura de dados
 );
 
-reg [31:0] instruction [0:63]; // 32 espaços de instrução de 32 bits cada
-wire [29:0] aux;
-assign aux = A [31:2];
+`ifdef SYNTHESIS
+    // =================================================================
+    // MODO SÍNTESE (Genus) - Loopback Inteligente
+    // =================================================================
+    // O RD = A geraria instrução 0x0, que desligaria o controle.
+    // Solução: Forçamos os 7 bits finais para 0110011 (0x33),
+    // que é o opcode de instruções R-Type (ADD, SUB, etc).
+    // Assim o Control Unit ativa RegWrite e o processador fica "vivo".
+    
+    assign RD = A | 32'h00000033;
 
-initial begin $readmemh("/home/marcosbarbosa/Documents/verilog/rv-pipeline/programs/instructions.txt", instruction_memory.instruction); end
+`else
+    // =================================================================
+    // MODO SIMULAÇÃO (Icarus Verilog)
+    // =================================================================
+    reg [31:0] instruction [0:63]; // 64 espaços de instrução de 32 bits cada
+    wire [29:0] aux;
+    assign aux = A[31:2];
 
-// Leitura combinacional
-always @ (aux, instruction[aux])
-begin
-    RD = instruction[aux]; // Saída recebe a instrução alinhada
-end
+    initial begin 
+        $readmemh("/home/marcosbarbosa/Documents/verilog/rv-pipeline/programs/instructions.txt", instruction); 
+    end
+
+    assign RD = instruction[aux];
+`endif
+
 endmodule

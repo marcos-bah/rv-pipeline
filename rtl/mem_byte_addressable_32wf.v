@@ -46,11 +46,17 @@ memory_write_first #(.DATA_WIDTH(8), .ADDRESS_WIDTH(4)) mem_byte3
 );
 
     // Inicialização dos dados
-initial begin
-    // Carregar dados de inicialização separados para cada byte de memória
-    $readmemh("/home/marcosbarbosa/Documents/verilog/rv-pipeline/mem/mem_byte0_init.txt", mem_byte0.mem);  // Arquivo de inicialização para o byte 0
-    $readmemh("/home/marcosbarbosa/Documents/verilog/rv-pipeline/mem/mem_byte1_init.txt", mem_byte1.mem);  // Arquivo de inicialização para o byte 1
-    $readmemh("/home/marcosbarbosa/Documents/verilog/rv-pipeline/mem/mem_byte2_init.txt", mem_byte2.mem);  // Arquivo de inicialização para o byte 2
-    $readmemh("/home/marcosbarbosa/Documents/verilog/rv-pipeline/mem/mem_byte3_init.txt", mem_byte3.mem);  // Arquivo de inicialização para o byte 3
-end
+`ifndef SYNTHESIS
+    // =================================================================
+    // MODO SIMULAÇÃO (Icarus Verilog) - Carrega dados de arquivo
+    // =================================================================
+    initial begin
+        $readmemh("/home/marcosbarbosa/Documents/verilog/rv-pipeline/mem/mem_byte0_init.txt", mem_byte0.mem);
+        $readmemh("/home/marcosbarbosa/Documents/verilog/rv-pipeline/mem/mem_byte1_init.txt", mem_byte1.mem);
+        $readmemh("/home/marcosbarbosa/Documents/verilog/rv-pipeline/mem/mem_byte2_init.txt", mem_byte2.mem);
+        $readmemh("/home/marcosbarbosa/Documents/verilog/rv-pipeline/mem/mem_byte3_init.txt", mem_byte3.mem);
+    end
+`endif
+    // MODO SÍNTESE: Memória não inicializada (dados virão em runtime)
+
 endmodule
