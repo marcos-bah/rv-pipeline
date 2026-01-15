@@ -1,98 +1,194 @@
-# =============================================================================
-# Cadence Genus Synthesis Script - RISC-V Pipeline with FPU
-# =============================================================================
-# Usage: genus -f synthesis/run_synthesis.tcl -log synthesis/logs/genus.log
-# Or:    genus -legacy_ui -f synthesis/run_synthesis.tcl
+# =============================================================================# =============================================================================
+
+# Cadence Genus Synthesis Script - RISC-V Pipeline with FPU# Cadence Genus Synthesis Script - RISC-V Pipeline with FPU
+
+# =============================================================================# =============================================================================
+
+# Usage: genus -f run_synthesis.tcl# Usage: genus -f synthesis/run_synthesis.tcl -log synthesis/logs/genus.log
+
+# =============================================================================# Or:    genus -legacy_ui -f synthesis/run_synthesis.tcl
+
 # =============================================================================
 
 # -----------------------------------------------------------------------------
-# Configuration Variables - MODIFY THESE FOR YOUR ENVIRONMENT
-# -----------------------------------------------------------------------------
+
+# Setup Paths# -----------------------------------------------------------------------------
+
+# -----------------------------------------------------------------------------# Configuration Variables - MODIFY THESE FOR YOUR ENVIRONMENT
+
+set_db init_lib_search_path ./LIB/# -----------------------------------------------------------------------------
+
+set_db init_hdl_search_path ../rtl/
 
 # Scenario selection: baseline, ppa1, ppa2
-set SCENARIO "baseline"
 
-# Design name
-set DESIGN_NAME "topo"
+# -----------------------------------------------------------------------------set SCENARIO "baseline"
 
-# Paths
-set RTL_PATH "../rtl"
-set CONSTRAINTS_PATH "."
-set OUTPUT_PATH "./output"
-set REPORTS_PATH "./reports"
+# Read Libraries
 
-# Library paths - MODIFY THESE FOR YOUR PDK
-# Example for typical educational PDK (e.g., FreePDK45, SAED, etc.)
-set LIB_PATH "/path/to/your/pdk/lib"
-set LIB_NAME "your_library_typical.lib"
+# -----------------------------------------------------------------------------# Design name
 
-# For FreePDK45:
-# set LIB_PATH "/tools/FreePDK45/osu_soc/lib/files"
-# set LIB_NAME "gscl45nm.lib"
+read_libs slow_vdd1v0_basicCells.libset DESIGN_NAME "topo"
 
-# For SAED32:
-# set LIB_PATH "/tools/SAED32_EDK/lib/stdcell_hvt/db_nldm"
-# set LIB_NAME "saed32hvt_tt1p05v25c.lib"
 
-# -----------------------------------------------------------------------------
-# Parse command line arguments for scenario
-# -----------------------------------------------------------------------------
-if {[info exists env(SCENARIO)]} {
-    set SCENARIO $env(SCENARIO)
-}
+
+# -----------------------------------------------------------------------------# Paths
+
+# Read RTL Filesset RTL_PATH "../rtl"
+
+# -----------------------------------------------------------------------------set CONSTRAINTS_PATH "."
+
+read_hdl topo.vset OUTPUT_PATH "./output"
+
+read_hdl instruction_fetch.vset REPORTS_PATH "./reports"
+
+read_hdl instruction_decode.v
+
+read_hdl execute_memory.v# Library paths - MODIFY THESE FOR YOUR PDK
+
+read_hdl instruction_memory.v# Example for typical educational PDK (e.g., FreePDK45, SAED, etc.)
+
+read_hdl register_file.vset LIB_PATH "/path/to/your/pdk/lib"
+
+read_hdl alu.vset LIB_NAME "your_library_typical.lib"
+
+read_hdl fpu.v
+
+read_hdl forwarding_unit.v# For FreePDK45:
+
+read_hdl control_unit.v# set LIB_PATH "/tools/FreePDK45/osu_soc/lib/files"
+
+read_hdl main_decoder.v# set LIB_NAME "gscl45nm.lib"
+
+read_hdl ula_decoder.v
+
+read_hdl fpu_decoder.v# For SAED32:
+
+read_hdl sign_extend.v# set LIB_PATH "/tools/SAED32_EDK/lib/stdcell_hvt/db_nldm"
+
+read_hdl pc.v# set LIB_NAME "saed32hvt_tt1p05v25c.lib"
+
+read_hdl adder.v
+
+read_hdl mux_2x1_32bits.v# -----------------------------------------------------------------------------
+
+read_hdl mux_3x1_32bits.v# Parse command line arguments for scenario
+
+read_hdl multiply.v# -----------------------------------------------------------------------------
+
+read_hdl int2fp.vif {[info exists env(SCENARIO)]} {
+
+read_hdl fp2int.v    set SCENARIO $env(SCENARIO)
+
+read_hdl byte_enable_decoder.v}
+
+read_hdl mem_topo_little_endian.v
+
+read_hdl mem_byte_addressable_32wf.vputs "============================================"
+
+read_hdl mem_read_manager.vputs "  RISC-V Pipeline Synthesis"
+
+read_hdl memory_write_first.vputs "  Scenario: $SCENARIO"
 
 puts "============================================"
-puts "  RISC-V Pipeline Synthesis"
-puts "  Scenario: $SCENARIO"
-puts "============================================"
 
 # -----------------------------------------------------------------------------
-# Create output directories
-# -----------------------------------------------------------------------------
+
+# Elaborate Design# -----------------------------------------------------------------------------
+
+# -----------------------------------------------------------------------------# Create output directories
+
+elaborate topo# -----------------------------------------------------------------------------
+
 file mkdir $OUTPUT_PATH
-file mkdir $REPORTS_PATH
-file mkdir "${OUTPUT_PATH}/${SCENARIO}"
-file mkdir "${REPORTS_PATH}/${SCENARIO}"
 
-# -----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------file mkdir $REPORTS_PATH
+
+# Read Constraints - Select scenario: baseline (30ns), ppa1 (20ns), ppa2 (10ns)file mkdir "${OUTPUT_PATH}/${SCENARIO}"
+
+# -----------------------------------------------------------------------------file mkdir "${REPORTS_PATH}/${SCENARIO}"
+
+# Baseline: 30ns
+
+read_sdc ./constraints/constraints_baseline.sdc# -----------------------------------------------------------------------------
+
 # Set library paths
-# -----------------------------------------------------------------------------
-# Uncomment and modify for your environment:
+
+# PPA1: 20ns (uncomment to use)# -----------------------------------------------------------------------------
+
+# read_sdc ./constraints/constraints_ppa1.sdc# Uncomment and modify for your environment:
+
 # set_db init_lib_search_path $LIB_PATH
-# set_db library $LIB_NAME
+
+# PPA2: 10ns (uncomment to use)# set_db library $LIB_NAME
+
+# read_sdc ./constraints/constraints_ppa2.sdc
 
 # For demonstration without actual library:
-puts "WARNING: No library specified. Using generic gates."
-puts "Modify LIB_PATH and LIB_NAME in this script for your PDK."
+
+# -----------------------------------------------------------------------------puts "WARNING: No library specified. Using generic gates."
+
+# Synthesisputs "Modify LIB_PATH and LIB_NAME in this script for your PDK."
 
 # -----------------------------------------------------------------------------
-# Read RTL Files
+
+set_db syn_generic_effort medium# -----------------------------------------------------------------------------
+
+syn_generic# Read RTL Files
+
 # -----------------------------------------------------------------------------
-puts "Reading RTL files..."
+
+set_db syn_map_effort mediumputs "Reading RTL files..."
+
+syn_map
 
 # Read all Verilog files
-set rtl_files [glob -directory $RTL_PATH *.v]
+
+set_db syn_opt_effort mediumset rtl_files [glob -directory $RTL_PATH *.v]
+
+syn_opt
 
 # Exclude testbench files
-set rtl_files_filtered {}
-foreach f $rtl_files {
-    if {![string match "*_tb.v" $f]} {
-        lappend rtl_files_filtered $f
-    }
-}
 
-puts "RTL files to synthesize:"
+# -----------------------------------------------------------------------------set rtl_files_filtered {}
+
+# Reportsforeach f $rtl_files {
+
+# -----------------------------------------------------------------------------    if {![string match "*_tb.v" $f]} {
+
+report_timing > ./outputs/topo_timing.rpt        lappend rtl_files_filtered $f
+
+report_area > ./outputs/topo_area.rpt    }
+
+report_power > ./outputs/topo_power.rpt}
+
+report_qor > ./outputs/topo_qor.rpt
+
+report_gates > ./outputs/topo_gates.rptputs "RTL files to synthesize:"
+
 foreach f $rtl_files_filtered {
-    puts "  $f"
-}
 
-read_hdl -sv $rtl_files_filtered
+# -----------------------------------------------------------------------------    puts "  $f"
+
+# Write Outputs}
 
 # -----------------------------------------------------------------------------
+
+write_hdl > ./outputs/topo_netlist.vread_hdl -sv $rtl_files_filtered
+
+write_sdc > ./outputs/topo_constraints.sdc
+
+write_sdf -timescale ns > ./outputs/topo_delays.sdf# -----------------------------------------------------------------------------
+
 # Elaborate Design
-# -----------------------------------------------------------------------------
-puts "Elaborating design..."
-elaborate $DESIGN_NAME
+
+puts "============================================"# -----------------------------------------------------------------------------
+
+puts "  Synthesis Complete!"puts "Elaborating design..."
+
+puts "  Outputs saved to ./outputs/"elaborate $DESIGN_NAME
+
+puts "============================================"
 
 # Check for errors
 check_design -unresolved
