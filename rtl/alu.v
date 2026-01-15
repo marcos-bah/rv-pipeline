@@ -14,6 +14,7 @@ begin
         3'b011: ALUResult = A | B; //or
         3'b101: ALUResult = (A < B) ? 32'd1 : 32'd0; //slt
         3'b110: ALUResult = A << B;
+        3'b111: ALUResult = B; //pass B (para LUI)
  
         default: ALUResult = 32'b0; 
     endcase

@@ -6,7 +6,7 @@ module Control_Unit (
   output Branch,
   output MemWrite,
   output ALUSrc,
-  output [1:0] ImmSrc,
+  output [2:0] ImmSrc,
   output RegWrite,
   input [2:0] funct3,
   input funct7,

@@ -3,14 +3,15 @@ module topo (
 );
 
 // CUIDAR COM TIPOS REG E WIRE, MANTER REGS NOS FF`S APENAS
-// ALTERAÇÕES PARA UTILIZAÇÃO DA FPU INCOMPLETOS, NÃO VAI FUNCIONAR
 
 // sinais do IF
-wire [31:0] branchOffset, inst, WB;
+wire [31:0] branchOffset, inst, WB, ALUResult;
 wire zeroFlag, branchFlag, flush, Branch;
 wire RSWIRE; // seletor mux
 wire WER2WIRE; // write enable do register file
 wire [4:0] WA;
+wire WEFWIRE2; // write enable float para entrada do rf
+wire ASWIRE; // ALUSrc wire
 // Fetch
 InstructionFetch IF (
     .clk(clk),
@@ -136,6 +137,7 @@ assign MUXAFPUWIRE = MUXAFPU;
 // flip flops D e M (movidos para antes do forwarding)
 reg [31:0] ALUR;
 reg [31:0] MR;
+reg [31:0] ALU_MEM, MR_MEM; // registros intermediários EX→MEM
 wire [31:0] ALURWIRE, MRWIRE;
 assign ALURWIRE = ALUR;
 assign MRWIRE = MR;
@@ -143,10 +145,12 @@ assign MRWIRE = MR;
 // flip flop para rd no estágio MEM (EX→MEM)
 reg [4:0] II_MEM;
 reg WER_MEM, WEF_MEM;
+reg [1:0] RS_MEM;
 always @(posedge clk) begin
     II_MEM <= II;
     WER_MEM <= WER;
     WEF_MEM <= WERF;
+    RS_MEM <= RS;
 end
 
 // flip flop controle WB (movidos para antes do forwarding)
@@ -188,7 +192,7 @@ wire [31:0] SrcA_Fwd, SrcB_Fwd;
 mux3x1_32bits mux_fwd_A (
     .in00(Aout),      // Sem forwarding (valor do register file)
     .in01(WB),        // Forward do WB
-    .in10(ALUResult), // Forward do MEM (resultado da ALU/FPU)
+    .in10(ALU_MEM),   // Forward do MEM (resultado registrado)
     .sel(ForwardA),
     .out(SrcA_Fwd)
 );
@@ -196,7 +200,7 @@ mux3x1_32bits mux_fwd_A (
 mux3x1_32bits mux_fwd_B (
     .in00(Bout),      // Sem forwarding
     .in01(WB),        // Forward do WB
-    .in10(ALUResult), // Forward do MEM
+    .in10(ALU_MEM),   // Forward do MEM
     .sel(ForwardB),
     .out(SrcB_Fwd)
 );
@@ -207,7 +211,7 @@ wire [31:0] SrcAF_Fwd, SrcBF_Fwd;
 mux3x1_32bits mux_fwd_FA (
     .in00(FAout),     // Sem forwarding
     .in01(WB),        // Forward do WB
-    .in10(ALUResult), // Forward do MEM
+    .in10(ALU_MEM),   // Forward do MEM
     .sel(ForwardFA),
     .out(SrcAF_Fwd)
 );
@@ -215,12 +219,12 @@ mux3x1_32bits mux_fwd_FA (
 mux3x1_32bits mux_fwd_FB (
     .in00(FBout),     // Sem forwarding
     .in01(WB),        // Forward do WB
-    .in10(ALUResult), // Forward do MEM
+    .in10(ALU_MEM),   // Forward do MEM
     .sel(ForwardFB),
     .out(SrcBF_Fwd)
 );
 
-wire [31:0] ReadData, ALUResult;
+wire [31:0] ReadData;
 Execute_Memory EXMEM (
     .ImmExt(branchOffset),
     .WriteData(SrcB_Fwd),     // Usa valor com forwarding aplicado
@@ -241,17 +245,21 @@ Execute_Memory EXMEM (
     .funct3(F3WIRE)
 );
 
-// Atualização dos flip flops D e M
-always @ (posedge clk) ALUR <= ALUResult; // ALU Result do estágio MEM/WB
-always @ (posedge clk) MR <= ReadData; // Memory Result do estágio MEM/WB
+// Atualização dos flip flops D e M (EX→MEM)
+always @ (posedge clk) ALU_MEM <= ALUResult; // ALU Result EX→MEM
+always @ (posedge clk) MR_MEM <= ReadData; // Memory Result EX→MEM
+
+// Atualização dos flip flops D e M (MEM→WB)
+always @ (posedge clk) ALUR <= ALU_MEM; // ALU Result MEM→WB
+always @ (posedge clk) MR <= MR_MEM; // Memory Result MEM→WB
 
 // Atualização dos flip flops de controle WB
 always @ (posedge clk)
 begin
-        RS2 <= RS;
-        WER2 <= WER;
-        II2 <= II;
-        WEF2 <= WERF;
+        RS2 <= RS_MEM;
+        WER2 <= WER_MEM;
+        II2 <= II_MEM;
+        WEF2 <= WEF_MEM;
 end
 
 mux2x1_32bits muxout (

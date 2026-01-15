@@ -44,6 +44,7 @@ help:
 	@echo "  make test_all       - Executa todos os testes"
 	@echo "  make test_fwd       - Teste da Forwarding Unit"
 	@echo "  make test_fpu       - Teste da FPU"
+	@echo "  make test_fpu_fwd   - Teste FPU + Forwarding integrado"
 	@echo "  make test_alu       - Teste da ALU"
 	@echo "  make test_decoder   - Teste do Main Decoder"
 	@echo "  make test_signext   - Teste do Sign Extend"
@@ -78,6 +79,12 @@ test_fpu: $(BUILD_DIR)
 	@echo "$(YELLOW)[COMPILANDO]$(NC) Teste da FPU..."
 	@$(IVERILOG) $(IVFLAGS) -o $(BUILD_DIR)/test_fpu $(TB_DIR)/fpu_tb.v $(RTL_DIR)/fpu.v $(RTL_DIR)/adder.v $(RTL_DIR)/multiply.v $(RTL_DIR)/int2fp.v $(RTL_DIR)/fp2int.v 2>&1 | tee $(LOG_DIR)/compile_fpu.log
 	@echo "$(YELLOW)[EXECUTANDO]$(NC) Teste FPU..."
+
+test_fpu_fwd: $(BUILD_DIR)
+	@echo "$(YELLOW)[COMPILANDO]$(NC) Teste da FPU + Forwarding..."
+	@$(IVERILOG) $(IVFLAGS) -o $(BUILD_DIR)/test_fpu_fwd $(TB_DIR)/fpu_forwarding_tb.v $(RTL_DIR)/fpu.v $(RTL_DIR)/forwarding_unit.v $(RTL_DIR)/adder.v $(RTL_DIR)/multiply.v $(RTL_DIR)/int2fp.v $(RTL_DIR)/fp2int.v 2>&1 | tee $(LOG_DIR)/compile_fpu_fwd.log
+	@echo "$(YELLOW)[EXECUTANDO]$(NC) Teste FPU + Forwarding..."
+	@$(VVP) $(BUILD_DIR)/test_fpu_fwd 2>&1 | tee $(LOG_DIR)/test_fpu_fwd.log"
 	@$(VVP) $(BUILD_DIR)/test_fpu 2>&1 | tee $(LOG_DIR)/test_fpu.log
 
 test_alu: $(BUILD_DIR)

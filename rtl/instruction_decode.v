@@ -20,7 +20,7 @@ module InstructionDecode (
 
 );
 
-wire [1:0] ImmSrc;
+wire [2:0] ImmSrc;
 
 Control_Unit control (
   .op(Instr[6:0]),
@@ -43,7 +43,8 @@ Control_Unit control (
   .DSrc(DSrc)
 );
 
-register_file rfx (
+// Register file de inteiros (x0-x31) - x0 é sempre zero
+register_file #(.ZERO_REG(1)) rfx (
     .clk(clk),
     .A1(Instr[19:15]), // endereço de leitura A
     .A2(Instr[24:20]), // endereço de leitura B
@@ -54,7 +55,8 @@ register_file rfx (
     .WE(WE) // write enable
 );
 
-register_file rff (
+// Register file de floats (f0-f31) - f0 é normal
+register_file #(.ZERO_REG(0)) rff (
   .clk(clk),
   .A1(Instr[19:15]), // endereço de leitura A (mesmo que o outro registrador)
   .A2(Instr[24:20]), // endereço de leitura B (mesmo que o outro registrador)

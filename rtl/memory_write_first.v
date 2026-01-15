@@ -16,5 +16,6 @@ begin
     dout <= we ? din : mem[addr]; // escrita tem prioridade
 end
 
-always @(*) dout <= mem[addr]; //leitura assinc.
+// Leitura assíncrona
+always @(addr, mem[addr]) dout <= mem[addr];
 endmodule

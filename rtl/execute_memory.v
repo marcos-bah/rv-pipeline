@@ -82,7 +82,8 @@ module Execute_Memory (
     .RD(ReadData)
   );
 */
-assign deslocado = (funct3[1] != 1'b1) ? (muxpal_result << 2) : ((muxpal_result <<2 ) - 4 );
+// Endereço já vem em bytes do ALU, memória faz addr[5:2] internamente
+assign deslocado = muxpal_result[5:0];
 
   memTopo32LittleEndian dmemory (
     .clk(clk),

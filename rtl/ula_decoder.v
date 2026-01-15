@@ -14,6 +14,7 @@ begin
 casex (aux)
     7'b00_xxx_xx : ALUControl = 3'b000;
     7'b01_xxx_xx : ALUControl = 3'b001;
+    7'b11_xxx_xx : ALUControl = 3'b111; // LUI: passa B direto
     7'b10_000_00 : ALUControl = 3'b000;
     7'b10_000_01 : ALUControl = 3'b000;
     7'b10_000_10 : ALUControl = 3'b000;

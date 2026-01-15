@@ -1,63 +1,60 @@
-// Escrita síncrona, leitura assíncrona
-//completo
-module register_file (
-    input [4:0] A1, A2, A3, //! Endereços
-    input [31:0] WD3, // Dados de entrada
-    input WE, // Enable
-    output reg [31:0] RD1, RD2, // Leitura dos dados
-    input clk
+// =============================================================================
+// Register File Parametrizado
+// Escrita síncrona, leitura assíncrona com bypass interno
+// 
+// Parâmetro ZERO_REG:
+//   1 = Registrador 0 é hardwired zero (para inteiros x0)
+//   0 = Registrador 0 é normal (para floats f0)
+// =============================================================================
+
+module register_file #(
+    parameter ZERO_REG = 1  // 1: x0 sempre zero, 0: f0 é normal
+) (
+    input [4:0] A1, A2, A3, // Endereços (rs1, rs2, rd)
+    input [31:0] WD3,       // Dados de entrada (write data)
+    input WE,               // Write Enable
+    input clk,
+    output reg [31:0] RD1, RD2  // Dados de saída (read data)
 );
 
 reg [31:0] register [0:31]; // 32 registradores de 32 bits
 
-initial
-begin
+// Inicialização
+initial begin
     register[0] = 32'h0;
-    /*register[1] = 32'h0;
-    register[2] = 32'h0;
-    register[3] = 32'h0;
-    register[4] = 32'h0;
-    register[5] = 32'h0;
-    register[6] = 32'h0;
-    register[7] = 32'h0;
-    register[8] = 32'h0;
-    register[9] = 32'h0;
-    register[10] = 32'h0;
-    register[11] = 32'h0;
-    register[12] = 32'h0;
-    register[13] = 32'h0;
-    register[14] = 32'h0;
-    register[15] = 32'h0;
-    register[16] = 32'h0;
-    register[17] = 32'h0;
-    register[18] = 32'h0;
-    register[19] = 32'h0;
-    register[20] = 32'h0;
-    register[21] = 32'h0;
-    register[22] = 32'h0;
-    register[23] = 32'h0;
-    register[24] = 32'h0;
-    register[25] = 32'h0;
-    register[26] = 32'h0;
-    register[27] = 32'h0;
-    register[28] = 32'h1;
-    register[29] = 32'h0;
-    register[30] = 32'h0;
-    register[31] = 32'h0;*/
-
 end
 
-always @ (posedge clk)
-begin
-    if (WE && A3 != 5'b0)  // Não permite escrita em x0
-        begin
-            register[A3] <= WD3; // Escrita no registrador de endereço A3
-        end
+// Escrita síncrona
+always @(posedge clk) begin
+    if (ZERO_REG) begin
+        // Inteiros: não permite escrita em x0
+        if (WE && A3 != 5'b0)
+            register[A3] <= WD3;
+    end else begin
+        // Floats: permite escrita em qualquer registrador (incluindo f0)
+        if (WE)
+            register[A3] <= WD3;
+    end
 end
 
-always @ (*)
-begin
-    RD1 = register[A1]; // Leitura no endereço 1
-    RD2 = register[A2]; // Leitura bo endereço 2
+// Leitura combinacional com bypass interno
+// Se estamos escrevendo no mesmo registrador que estamos lendo, retorna o dado sendo escrito
+always @(A1, A2, A3, WE, WD3, register[A1], register[A2]) begin
+    // RD1
+    if (ZERO_REG && A1 == 5'b0)
+        RD1 = 32'b0;  // x0 sempre zero
+    else if (WE && A3 == A1 && (ZERO_REG == 0 || A3 != 5'b0))
+        RD1 = WD3;    // Bypass
+    else
+        RD1 = register[A1];
+    
+    // RD2
+    if (ZERO_REG && A2 == 5'b0)
+        RD2 = 32'b0;  // x0 sempre zero
+    else if (WE && A3 == A2 && (ZERO_REG == 0 || A3 != 5'b0))
+        RD2 = WD3;    // Bypass
+    else
+        RD2 = register[A2];
 end
+
 endmodule

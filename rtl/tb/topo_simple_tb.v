@@ -1,7 +1,6 @@
 // Testbench Simples para Validação do Pipeline RISC-V
 // Executa o programa e verifica se os resultados estão corretos
 
-`timescale 1ns/1ps
 
 module topo_simple_tb;
 

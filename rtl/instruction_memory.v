@@ -148,7 +148,8 @@ end
 
 initial begin $readmemh("/home/marcosbarbosa/Documents/verilog/rv-pipeline/programs/instructions.txt", instruction_memory.instruction); end
 
-always @ (*)
+// Leitura combinacional
+always @ (aux, instruction[aux])
 begin
     RD = instruction[aux]; // Saída recebe a instrução alinhada
 end
