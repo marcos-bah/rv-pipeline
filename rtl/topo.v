@@ -1,5 +1,11 @@
 module topo (
-    input clk, rst
+    input clk, rst,
+    // Saídas para observação (necessárias para síntese)
+    output [31:0] debug_WB,       // Resultado do Write Back
+    output [31:0] debug_ALUResult, // Resultado da ALU
+    output [31:0] debug_inst,     // Instrução atual
+    output [4:0]  debug_WA,       // Endereço de escrita no RF
+    output        debug_RegWrite  // Write Enable do Register File
 );
 
 // CUIDAR COM TIPOS REG E WIRE, MANTER REGS NOS FF`S APENAS
@@ -268,4 +274,12 @@ mux2x1_32bits muxout (
   .sel(RSWIRE),
   .out(WB)
 );
+
+// Conexão das saídas de debug para síntese
+assign debug_WB = WB;
+assign debug_ALUResult = ALUResult;
+assign debug_inst = inst;
+assign debug_WA = WA;
+assign debug_RegWrite = WER2WIRE;
+
 endmodule
