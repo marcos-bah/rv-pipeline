@@ -61,21 +61,6 @@ set_input_transition -min $INPUT_MIN_TRANS [all_inputs]
 set_input_transition -max $INPUT_MAX_TRANS [all_inputs]
 
 # -----------------------------------------------------------------------------
-# Design Rule Constraints
-# -----------------------------------------------------------------------------
-# Set max transition for all nets
-set_max_transition [expr $CLK_PERIOD * 0.15] [current_design]
-
-# Set max fanout
-set_max_fanout 20 [current_design]
-
-# -----------------------------------------------------------------------------
-# False Paths
-# -----------------------------------------------------------------------------
-# Reset is asynchronous - set as false path for timing
-set_false_path -from [get_ports rst]
-
-# -----------------------------------------------------------------------------
 # Report Clock Info
 # -----------------------------------------------------------------------------
 puts "============================================"
