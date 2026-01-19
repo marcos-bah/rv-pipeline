@@ -27,3 +27,12 @@ synthesis/.rs_*
 *.genus_setup*
 genus.*
 fv/
+
+# Genus and synthesis logs/command files (some already covered above, keep explicit patterns)
+synthesis/genus.*
+synthesis/*.log*
+synthesis/*.cmd*
+
+# Anything else under synthesis that looks generated
+synthesis/tmp/
+synthesis/*.tmp
