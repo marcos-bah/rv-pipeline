@@ -22,8 +22,8 @@ module instruction_memory (
     wire [29:0] aux;
     assign aux = A[31:2];
 
-    initial begin 
-        $readmemh("/home/marcosbarbosa/Documents/verilog/rv-pipeline/programs/instructions.txt", instruction); 
+    initial begin
+        $readmemh("/home/cidigital1/cidigital/rv-pipeline/programs/instructions.txt", instruction);
     end
 
     assign RD = instruction[aux];

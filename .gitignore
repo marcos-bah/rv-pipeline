@@ -10,3 +10,20 @@
 
 # OS files
 .DS_Store
+
+# =============================================================================
+# Synthesis (Cadence Genus)
+# =============================================================================
+synthesis/logs/
+synthesis/fv/
+synthesis/*.log
+synthesis/*.log1
+synthesis/*.cmd
+synthesis/*.cmd1
+synthesis/.rs_*
+
+# Genus temp files
+.cadence/
+*.genus_setup*
+genus.*
+fv/

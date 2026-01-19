@@ -12,7 +12,7 @@ puts "============================================"
 # 1. CONFIGURATION
 # =============================================================================
 
-set DESIGN_NAME    "topo"
+set DESIGN_NAME    "baseline"
 set LIB_PATH       "./LIB"
 set RTL_PATH       "../rtl"
 set CONSTRAINTS    "./constraints/constraints_baseline.sdc"

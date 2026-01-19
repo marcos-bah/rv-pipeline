@@ -106,23 +106,19 @@ read_sdc $CONSTRAINTS
 # 6. SYNTHESIS
 # =============================================================================
 
-puts "Running synthesis (express effort - maximum performance)..."
+puts "Running synthesis (high effort - maximum performance)..."
 
-# Generic synthesis - express effort for aggressive timing
-set_db syn_generic_effort express
+# Generic synthesis - high effort for aggressive timing
+set_db syn_generic_effort high
 syn_generic
 
-# Technology mapping - express effort
-set_db syn_map_effort express
+# Technology mapping - high effort
+set_db syn_map_effort high
 syn_map
 
-# Optimization - express effort for maximum performance
-set_db syn_opt_effort express
+# Optimization - high effort for maximum performance
+set_db syn_opt_effort high
 syn_opt
-
-# Additional timing optimization pass
-puts "Running incremental optimization..."
-syn_opt -incr
 
 # =============================================================================
 # 7. REPORTS

@@ -120,47 +120,33 @@
 # f5 = f1 + f2
 # Soma os dois primeiros valores.
 
-# Linhas 16-17: 00000013 - nop (×2)
-# Duas instruções NOP (No Operation) para evitar hazard de dados.
-# A próxima instrução precisa de f5, que ainda está sendo calculado.
-# O pipeline precisa de 2 ciclos para o resultado estar disponível.
-
-# Linha 18: 0032f353 - fadd.s f6, f5, f3
+# Linha 16: 0032f353 - fadd.s f6, f5, f3
 # f6 = f5 + f3
 # Soma o resultado parcial (f5) com o terceiro valor.
+# NOTA: Funciona SEM NOP graças ao forwarding MEM→EX!
 
-# Linhas 19-20: 00000013 - nop (×2)
-# Hazard: fadd.s f7 precisa de f6.
-
-# Linha 21: 004373d3 - fadd.s f7, f6, f4
+# Linha 17: 004373d3 - fadd.s f7, f6, f4
 # f7 = f6 + f4
 # Soma final: f7 = val1 + val2 + val3 + val4
+# NOTA: Funciona SEM NOP graças ao forwarding MEM→EX!
 
 # =============================================================================
-# SEÇÃO 6: ARMAZENAMENTO DOS RESULTADOS
+# SEÇÃO 6: ARMAZENAMENTO E CONVERSÃO DOS RESULTADOS
 # =============================================================================
 
-# Linhas 22-23: 00000013 - nop (×2)
-# Hazard: fsw precisa de f7.
-
-# Linha 24: 007023a7 - fsw f7, 7(x0)
+# Linha 18: 007023a7 - fsw f7, 7(x0)
 # Armazena o resultado em ponto flutuante na posição de memória 7.
 # fsw = "float store word"
 # O valor IEEE754 de f7 é escrito diretamente na memória.
 
-# Linhas 25-26: 00000013 - nop (×2)
-# Hazard: fcvt.w.s precisa de f7.
-
-# Linha 27: c003f4d3 - fcvt.w.s x9, f7
+# Linha 19: c003f4d3 - fcvt.w.s x9, f7
 # Converte o resultado de ponto flutuante para inteiro.
 # fcvt.w.s = "convert word from single"
 # O valor é truncado (parte fracionária descartada).
 # x9 recebe a parte inteira do resultado.
+# NOTA: Funciona SEM NOP graças ao forwarding!
 
-# Linhas 28-29: 00000013 - nop (×2)
-# Hazard: sw precisa de x9.
-
-# Linha 30: 00902323 - sw x9, 6(x0)
+# Linha 20: 00902323 - sw x9, 6(x0)
 # Armazena o resultado inteiro na posição de memória 6.
 # sw = "store word"
 
@@ -168,7 +154,7 @@
 # SEÇÃO 7: LOOP INFINITO (FIM DO PROGRAMA)
 # =============================================================================
 
-# Linha 31: 00000063 - beq x0, x0, 0
+# Linha 21: 00000063 - beq x0, x0, 0
 # Branch if equal: salta para o mesmo endereço se x0 == x0.
 # Como x0 é sempre 0, a condição é sempre verdadeira.
 # Isso cria um loop infinito, mantendo o processador ocupado.
@@ -215,29 +201,98 @@
 # - 270336 em Q16.16 = 270336 / 65536 = 4.125
 
 # =============================================================================
-# SOBRE OS NOPs (HAZARDS DE DADOS)
+# SOBRE OS NOPs (HAZARDS DE DADOS) - NÃO SÃO MAIS NECESSÁRIOS!
 # =============================================================================
 #
-# Os NOPs são necessários porque o pipeline RISC-V precisa de tempo para
-# propagar os resultados pelos estágios. Quando uma instrução precisa do
-# resultado de uma instrução anterior que ainda não completou, ocorre um
-# "hazard de dados" (RAW - Read After Write).
+# IMPORTANTE: Os NOPs foram REMOVIDOS do programa e ele continua funcionando
+# corretamente! Isso ocorre porque o FORWARDING (bypassing) resolve os hazards
+# de dados automaticamente.
 #
-# Com as correções implementadas:
-# - Forwarding funciona para inteiros E floats (MEM→EX e WB→EX)
-# - Bypass no register file resolve hazard WB→ID no mesmo ciclo
-# - Ainda são necessários NOPs entre instruções dependentes devido à
-#   latência do pipeline (4 NOPs para segurança máxima)
+# =============================================================================
+# POR QUE FUNCIONA SEM NOPs?
+# =============================================================================
+#
+# O Forwarding Unit detecta quando uma instrução no estágio EX precisa de um
+# valor que ainda está sendo calculado nos estágios MEM ou WB, e redireciona
+# o valor diretamente, sem esperar que ele chegue ao register file.
+#
+# Exemplo de execução SEM NOPs:
+#
+#   Ciclo:        1    2    3    4    5    6    7
+#   fadd f5,f1,f2: IF   ID   EX   MEM  WB
+#   fadd f6,f5,f3:      IF   ID   EX   MEM  WB
+#                                 ↑
+#                          Forward MEM→EX!
+#                          (f5 é pego diretamente do estágio MEM)
+#
+# O que acontece no ciclo 4:
+#   - Instrução A (fadd f5) está no MEM com o resultado de f5 calculado
+#   - Instrução B (fadd f6) está no EX e precisa de f5
+#   - Forwarding Unit detecta: Rd_MEM (f5) == Rs1_EX (f5)
+#   - ForwardFA = 2'b10 → Mux seleciona ALU_MEM ao invés do register file
+#   - Resultado: f5 é passado diretamente, sem stall!
+#
+# =============================================================================
+# IMPLEMENTAÇÃO DO FORWARDING
+# =============================================================================
+#
+# 1. FORWARDING UNIT (forwarding_unit.v):
+#    Compara os registradores de origem (Rs1, Rs2) no EX com os registradores
+#    de destino (Rd) nos estágios MEM e WB.
+#
+#    if (Rd_MEM == Rs1_EX && RegWrite_MEM) → ForwardA = 10 (pega do MEM)
+#    if (Rd_WB == Rs1_EX && RegWrite_WB)   → ForwardA = 01 (pega do WB)
+#    senão                                 → ForwardA = 00 (pega do RF)
+#
+# 2. MUXES DE FORWARDING (topo.v):
+#    Selecionam a fonte correta dos operandos:
+#
+#    mux3x1 mux_fwd_A:
+#      sel=00 → Aout      (valor do register file)
+#      sel=01 → WB        (forward do estágio WB)
+#      sel=10 → ALU_MEM   (forward do estágio MEM)
+#
+# 3. FORWARDING PARA FLOATS:
+#    O mesmo mecanismo funciona para registradores float (f1-f31):
+#    - ForwardFA e ForwardFB controlam os muxes de operandos float
+#    - RegWriteF_MEM e RegWriteF_WB indicam escrita em registradores float
+#
+# =============================================================================
+# QUANDO NOPs AINDA SERIAM NECESSÁRIOS?
+# =============================================================================
+#
+# 1. LOAD-USE HAZARD:
+#    Se uma instrução LW é seguida imediatamente por uma instrução que usa
+#    o valor carregado, é necessário 1 ciclo de stall (ou 1 NOP), porque
+#    o dado só está disponível após o estágio MEM.
+#
+#    Exemplo que PRECISARIA de NOP:
+#      lw  x5, 0(x0)     # x5 disponível apenas no MEM
+#      add x6, x5, x7    # Precisa de x5 no EX → HAZARD!
+#
+#    Com forwarding MEM→EX, funciona se houver 1 instrução entre elas.
+#
+# 2. SEM FORWARDING IMPLEMENTADO:
+#    Sem forwarding, seria necessário esperar 2-3 ciclos (NOPs) para
+#    cada dependência de dados.
+#
+# =============================================================================
+# RESUMO: PIPELINE COM FORWARDING COMPLETO
+# =============================================================================
+#
+#   ANTES (sem forwarding):     DEPOIS (com forwarding):
+#   fadd f5, f1, f2             fadd f5, f1, f2
+#   nop                         fadd f6, f5, f3  ← SEM NOP!
+#   nop                         fadd f7, f6, f4  ← SEM NOP!
+#   fadd f6, f5, f3             fsw  f7, 0(x0)   ← SEM NOP!
+#   nop
+#   nop
+#   fadd f7, f6, f4
+#   ...
+#
+#   Ganho: Redução significativa no número de ciclos!
 #
 # Pipeline de 5 estágios: IF → ID → EX → MEM → WB
-#
-# Exemplo de timing:
-#   Instrução A: IF(1) ID(2) EX(3) MEM(4) WB(5)
-#   Instrução B: IF(2) ID(3) EX(4) MEM(5) WB(6)
-#
-# Se B precisa do resultado de A:
-# - Forward MEM→EX: B no EX(4), A no MEM(4) → ForwardA/B = 10
-# - Forward WB→EX:  B no EX(5), A no WB(5)  → ForwardA/B = 01
 # - Bypass RF:      B no ID(5), A no WB(5)  → Bypass interno
 
 # =============================================================================
