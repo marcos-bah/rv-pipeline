@@ -1,33 +1,38 @@
-// dut_if.sv
-// Interface entre o DUT (topo) e o testbench UVM.
-// Contém sinais de clock e reset (conectados ao topo) e tarefas de convenience para driver/monitor.
+`ifndef DUT_IF_SV
+`define DUT_IF_SV
 
-interface dut_if (input bit clk);
-    // sinais conectáveis ao DUT
-    logic rst;
+interface dut_if(input logic clk);
+  
+  // Sinais de debug observados
+  logic [31:0] debug_WB;
+  logic [31:0] debug_ALUResult;
+  logic [31:0] debug_inst;
+  logic [4:0]  debug_WA;
+  logic        debug_RegWrite;
+  
+  // REMOVIDO: state (se não existir no seu DUT)
+  // Se precisar observar state interno, adicione como porta de debug no RTL
+  
+  // Clocking block para sincronização
+  clocking cb @(posedge clk);
+    input debug_WB;
+    input debug_ALUResult;
+    input debug_inst;
+    input debug_WA;
+    input debug_RegWrite;
+  endclocking
+  
+  // Modport para o monitor
+  modport monitor (
+    input clk,
+    input debug_WB,
+    input debug_ALUResult,
+    input debug_inst,
+    input debug_WA,
+    input debug_RegWrite,
+    clocking cb
+  );
+  
+endinterface
 
-    // debug outputs observáveis do DUT (wired to topo.v outputs)
-    logic [31:0] debug_WB;
-    logic [31:0] debug_ALUResult;
-    logic [31:0] debug_inst;
-    logic [4:0]  debug_WA;
-    logic        debug_RegWrite;
-
-    // small convenience task: pulse reset for N cycles
-    task automatic pulse_reset(input int cycles);
-        rst <= 1'b1;
-        repeat (cycles) @(posedge clk);
-        rst <= 1'b0;
-        @(posedge clk);
-    endtask
-
-    // sample snapshot of debug signals (called from monitor)
-    function automatic void sample(output logic [31:0] wb, output logic [31:0] alu, output logic [31:0] insto, output logic [4:0] wa, output logic wr);
-        wb = debug_WB;
-        alu = debug_ALUResult;
-        insto = debug_inst;
-        wa = debug_WA;
-        wr = debug_RegWrite;
-    endfunction
-
-endinterface : dut_if
+`endif // DUT_IF_SV

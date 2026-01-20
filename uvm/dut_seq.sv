@@ -1,29 +1,45 @@
-// dut_seq.sv
-// Exemplos de sequence: gera uma sequência de transações simples
-`include "uvm_macros.svh"
-import uvm_pkg::*;
+`ifndef DUT_SEQUENCE_SV
+`define DUT_SEQUENCE_SV
 
-class dut_sequence extends uvm_sequence #(dut_txn);
-    `uvm_object_utils(dut_sequence)
+class dut_sequence extends uvm_sequence#(dut_txn);
+  `uvm_object_utils(dut_sequence)
+  
+  // Número de transações a gerar
+  int num_trans = 10;
+  
+  // --------------------------------------------------
+  // Construtor
+  // --------------------------------------------------
+  function new(string name = "dut_sequence");
+    super.new(name);
+  endfunction
+  
+  // --------------------------------------------------
+  // Body - corpo da sequência
+  // --------------------------------------------------
+  virtual task body();
+    dut_txn tx;
+    
+    `uvm_info("SEQ", $sformatf("Iniciando sequencia com %0d transacoes", num_trans), UVM_MEDIUM)
+    
+    repeat (num_trans) begin
+      tx = dut_txn::type_id::create("tx");
+      
+      start_item(tx);
+      
+      // Randomize a transação
+      if (!tx.randomize()) begin
+        `uvm_error("SEQ", "Randomizacao falhou")
+      end
+      
+      finish_item(tx);
+      
+      `uvm_info("SEQ", $sformatf("Enviada transacao: %s", tx.convert2string()), UVM_HIGH)
+    end
+    
+    `uvm_info("SEQ", "Sequencia finalizada", UVM_MEDIUM)
+  endtask
+  
+endclass
 
-    function new(string name = "dut_sequence");
-        super.new(name);
-    endfunction
-
-    task body();
-        dut_txn tx;
-        // example: pulse reset, wait 5 cycles, then run 20 cycles
-        tx = dut_txn::type_id::create("tx1");
-        tx.do_reset = 1;
-        tx.cycles = 5;
-        start_item(tx);
-        finish_item(tx);
-
-        tx = dut_txn::type_id::create("tx2");
-        tx.do_reset = 0;
-        tx.cycles = 20;
-        start_item(tx);
-        finish_item(tx);
-    endtask
-
-endclass : dut_sequence
+`endif // DUT_SEQUENCE_SV

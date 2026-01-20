@@ -1,34 +1,62 @@
-// dut_test.sv
-// Teste principal UVM: configura environment, instancia sequence e a executa
-`include "uvm_macros.svh"
-import uvm_pkg::*;
+`ifndef DUT_TEST_SV
+`define DUT_TEST_SV
 
 class dut_test extends uvm_test;
-    `uvm_component_utils(dut_test)
+  `uvm_component_utils(dut_test)
+  
+  dut_env      env;
+  dut_sequence seq;
+  
+  // --------------------------------------------------
+  // Construtor
+  // --------------------------------------------------
+  function new(string name, uvm_component parent);
+    super.new(name, parent);
+  endfunction
+  
+  // --------------------------------------------------
+  // Build phase
+  // --------------------------------------------------
+  function void build_phase(uvm_phase phase);
+    virtual dut_if vif;
+    bit enable_cov = 1;
+    
+    super.build_phase(phase);
+    
+    // Instancia o ambiente
+    env = dut_env::type_id::create("env", this);
+    
+    // Obtem a virtual interface configurada externamente
+    if (!uvm_config_db#(virtual dut_if)::get(null, "", "vif", vif))
+      `uvm_fatal("NOVIF", "Virtual interface nao configurada. Use uvm_config_db::set antes de run_test().")
+    
+    // Injeta a interface no agent
+    uvm_config_db#(virtual dut_if)::set(this, "env.agent", "vif", vif);
+    
+    // Habilita ou desabilita o coletor de cobertura
+    uvm_config_db#(bit)::set(this, "env", "enable_cov", enable_cov);
+  endfunction
+  
+  // --------------------------------------------------
+  // Run phase
+  // --------------------------------------------------
+  task run_phase(uvm_phase phase);
+    phase.raise_objection(this);
+    
+    // Cria e inicia a sequência principal
+    seq = dut_sequence::type_id::create("seq");
+    
+    if (seq == null)
+      `uvm_fatal("NOSEQ", "Sequencia principal nao foi criada.")
+    
+    `uvm_info("TEST", "Iniciando sequencia principal", UVM_MEDIUM)
+    
+    // CORRIGIDO: sqr -> sequencer
+    seq.start(env.agent.sequencer);
+    
+    phase.drop_objection(this);
+  endtask
+  
+endclass
 
-    dut_env env;
-
-    function new(string name = "dut_test", uvm_component parent = null);
-        super.new(name, parent);
-    endfunction
-
-    function void build_phase(uvm_phase phase);
-        super.build_phase(phase);
-        env = dut_env::type_id::create("env", this);
-    endfunction
-
-    task run_phase(uvm_phase phase);
-        dut_sequence seq;
-        phase.raise_objection(this);
-
-        // start sequence on the agent's sequencer
-        seq = dut_sequence::type_id::create("dut_seq");
-        seq.start(env.agent.sequencer);
-
-        // wait some cycles for observation
-        repeat (200) @(posedge env.agent.monitor.vif.clk);
-
-        phase.drop_objection(this);
-    endtask
-
-endclass : dut_test
+`endif // DUT_TEST_SV

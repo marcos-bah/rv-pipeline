@@ -1,39 +1,63 @@
+//=====================================================
 // dut_env.sv
-// Environment: integra agent, predictor, scoreboard e cobertura
-`include "uvm_macros.svh"
-import uvm_pkg::*;
-import tb_pkg::*;
-
+// Ambiente UVM genérico com agent, scoreboard e (opcional) coverage
+//=====================================================
 class dut_env extends uvm_env;
-    `uvm_component_utils(dut_env)
+`uvm_component_utils(dut_env)
 
-    dut_agent       agent;
-    dut_predictor   predictor;
-    dut_scoreboard  scoreboard;
-    dut_coverage    cov;
+// --------------------------------------------------
+// Subcomponentes
+// --------------------------------------------------
+dut_agent      agent;
+dut_scoreboard sb;
+dut_cov        cov;   // opcional
 
-    function new(string name = "dut_env", uvm_component parent = null);
-        super.new(name, parent);
-    endfunction
+// --------------------------------------------------
+// Construtor
+// --------------------------------------------------
+function new(string name, uvm_component parent);
+  super.new(name, parent);
+endfunction
 
-    function void build_phase(uvm_phase phase);
-        super.build_phase(phase);
-        agent = dut_agent::type_id::create("agent", this);
-        predictor = dut_predictor::type_id::create("predictor", this);
-        scoreboard = dut_scoreboard::type_id::create("scoreboard", this);
-        cov = dut_coverage::type_id::create("cov", this);
-    endfunction
+// --------------------------------------------------
+// Build phase
+// --------------------------------------------------
+function void build_phase(uvm_phase phase);
+  bit enable_cov = 1;
+  
+  super.build_phase(phase);
+  
+  agent = dut_agent::type_id::create("agent", this);
+  sb    = dut_scoreboard::type_id::create("sb", this);
+  
+  // Permite habilitar ou desabilitar coverage via config_db
+  void'(uvm_config_db#(bit)::get(this, "", "enable_cov", enable_cov));
+  
+  if (enable_cov) begin
+    cov = dut_cov::type_id::create("cov", this);
+    `uvm_info("ENV", "Coverage collector habilitado", UVM_LOW)
+  end
+  else begin
+    `uvm_info("ENV", "Coverage collector desabilitado", UVM_LOW)
+  end
+endfunction
 
-    function void connect_phase(uvm_phase phase);
-        super.connect_phase(phase);
-        // conectar monitor -> predictor
-        agent.monitor.ap.connect(predictor.ap_imp);
-        // conectar monitor -> scoreboard (observed)
-        agent.monitor.ap.connect(scoreboard.obs_export);
-        // conectar predictor -> scoreboard (expected)
-        predictor.exp.connect(scoreboard.exp_export);
-        // conectar monitor -> coverage
-        agent.monitor.ap.connect(cov.analysis_export);
-    endfunction
+// --------------------------------------------------
+// Connect phase
+// --------------------------------------------------
+function void connect_phase(uvm_phase phase);
+  super.connect_phase(phase);
+  
+  // Conecta o tráfego de referência (expected) do predictor -> scoreboard
+  agent.predictor.analysis_port.connect(sb.expected_export);
+  
+  // Conecta o tráfego observado (monitor) -> scoreboard
+  agent.monitor.analysis_port.connect(sb.actual_export);
+  
+  // (Opcional) conecta o tráfego observado ao coverage collector
+  if (cov != null) begin
+    agent.monitor.analysis_port.connect(cov.analysis_export);
+  end
+endfunction
 
-endclass : dut_env
+endclass

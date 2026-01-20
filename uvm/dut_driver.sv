@@ -1,48 +1,72 @@
-// dut_driver.sv
-// Driver: converte dut_txn em ações no DUT via interface virtual
-`include "uvm_macros.svh"
-import uvm_pkg::*;
-import tb_pkg::*;
+`ifndef DUT_DRIVER_SV
+`define DUT_DRIVER_SV
 
-class dut_driver extends uvm_driver #(dut_txn);
-    `uvm_component_utils(dut_driver)
+class dut_driver extends uvm_driver#(dut_txn);
+  `uvm_component_utils(dut_driver)
+  
+  virtual dut_if vif;
+  
+  // --------------------------------------------------
+  // Construtor
+  // --------------------------------------------------
+  function new(string name, uvm_component parent);
+    super.new(name, parent);
+  endfunction
+  
+  // --------------------------------------------------
+  // build_phase
+  // --------------------------------------------------
+  function void build_phase(uvm_phase phase);
+    super.build_phase(phase);
+    if (!uvm_config_db#(virtual dut_if)::get(this, "", "vif", vif)) begin
+      `uvm_fatal("NOVIF", "Driver nao recebeu a interface virtual");
+    end
+  endfunction
+  
+  // --------------------------------------------------
+  // run_phase
+  // --------------------------------------------------
+  task run_phase(uvm_phase phase);
+    dut_txn tx;
+    
+    forever begin
+      // Pega próximo item da sequência
+      seq_item_port.get_next_item(tx);
+      
+      // Inicia rastreamento da transação
+      void'(tx.begin_tr());  // CORRIGIDO: adicionado void'()
+      
+      // Drive a transação
+      drive_transaction(tx);
+      
+      // Finaliza rastreamento
+      tx.end_tr();
+      
+      // Sinaliza conclusão
+      seq_item_port.item_done();
+    end
+  endtask
+  
+  // --------------------------------------------------
+  // Task para aplicar a transação na interface
+  // --------------------------------------------------
+  task drive_transaction(dut_txn tx);
+    // Exemplo: aguarda alguns ciclos (fixo ou aleatório)
+    // REMOVIDO: repeat (tx.cycles) - não existe esse campo
+    
+    // Espera 1 ciclo de clock
+    @(posedge vif.clk);
+    
+    // Aqui você aplicaria os sinais na interface
+    // Por exemplo, se tivesse sinais de controle:
+    // vif.enable = 1;
+    // vif.data_in = tx.some_data;
+    
+    // Para este caso específico (apenas observação via debug),
+    // o driver pode não fazer nada ou apenas gerar delays
+    `uvm_info("DRIVER", $sformatf("Driving transaction: inst=0x%08h", tx.inst), UVM_HIGH)
+  endtask
+  
+endclass
 
-    // virtual interface apontada para o DUT
-    virtual dut_if vif;
-
-    function new(string name = "dut_driver", uvm_component parent = null);
-        super.new(name, parent);
-    endfunction
-
-    // build_phase: pega a virtual interface (deve ser setada pelo top)
-    function void build_phase(uvm_phase phase);
-        super.build_phase(phase);
-        if (!uvm_config_db#(virtual dut_if)::get(this, "", "vif", vif)) begin
-            `uvm_fatal("NOVIF", "Virtual interface not set for driver")
-        end
-    endfunction
-
-    // main run: obtém item e executa
-    task run_phase(uvm_phase phase);
-        dut_txn tx;
-        forever begin
-            seq_item_port.get_next_item(tx);
-            `uvm_info(get_type_name(), $sformatf("Driver got txn: %s", tx.convert2string()), UVM_MEDIUM)
-
-            if (tx.do_reset) begin
-                // pede que a interface pulse reset (executa na borda do clock)
-                vif.pulse_reset(2);
-                `uvm_info(get_type_name(), "Driver pulsed reset", UVM_LOW)
-            end
-
-            // espera cycles pulsos de clock (a clock é gerada pelo tb_top)
-            repeat (tx.cycles) begin
-                @(posedge vif.clk);
-            end
-
-            // sinaliza conclusão do item
-            seq_item_port.item_done();
-        end
-    endtask
-
-endclass : dut_driver
+`endif // DUT_DRIVER_SV

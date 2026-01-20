@@ -1,20 +1,28 @@
-package tb_pkg;
-// tb_package.sv
-// Pacote contendo tipos compartilhados e a declaração da interface virtual usada pelo testbench UVM.
-// Mantemos aqui typedefs e imports comuns para o ambiente.
+//classe tb_package
+package tb_package;
+  import uvm_pkg::*;
+  `include "uvm_macros.svh"
 
-`include "uvm_macros.svh"
-import uvm_pkg::*;
+  // Transaction
+  `include "dut_txn.sv"
 
-// Typedef para a interface virtual que conecta driver/monitor ao DUT.
-// Observação: a interface física `dut_if` está definida em `uvm/dut_if.sv`.
-// Para evitar problemas de ordem de compilação, `files.f` especifica `dut_if.sv`
-// antes deste pacote. Alternativamente você pode `include` o `dut_if.sv`
-// diretamente dentro deste pacote, mas manter a interface num arquivo separado
-// é uma prática mais modular.
-typedef virtual dut_if dut_vif_if;
+  // Sequencer / Sequence
+  `include "dut_sequencer.sv"
+  `include "dut_seq.sv"
 
-// Forward declarations de classes (opcional, as classes estarão em arquivos próprios)
-// class dut_txn; endclass
+  // Driver / Monitor
+  `include "dut_driver.sv"
+  `include "dut_monitor.sv"
 
-endpackage : tb_pkg
+  // Analysis components
+  `include "dut_predictor.sv"
+  `include "dut_scoreboard.sv"
+  `include "dut_cov.sv"
+
+  // Agent / Env / Test
+  `include "dut_agent.sv"
+  `include "dut_env.sv"
+  `include "dut_test.sv"
+endpackage
+
+
