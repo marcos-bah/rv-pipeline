@@ -17,7 +17,7 @@ module Execute_Memory (
   input FPUAinSel,
   input [4:0] selFPU,
   output zero, // Ver se existe este sinal para FPU
-  output [31:0] ReadData, muxpal_result
+  output [31:0] ReadData, muxpal_result, Dado
 );
 
 // MÓDULO INCOMPLETO, FALTA A FPU E SEUS SINAIS, ALÉM DE COMPLETAR MUXES
@@ -94,5 +94,7 @@ assign deslocado = muxpal_result[5:0];
     .writeEnable(MemWrite),
     .dout(ReadData)
   );
+
+assign Dado = Write_muxmem;
 
 endmodule

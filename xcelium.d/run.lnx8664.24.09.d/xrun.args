@@ -1,0 +1,20 @@
+//
+// File created by:  xrun
+// Do not modify this file
+//
+-uvmhome
+/apps/cds/XCELIUM2409/tools.lnx86/methodology/UVM/CDNS-1.2
+-uvm
+-coverage
+all
+-sv
+-64bit
+-access
++rwc
+-clean
+-nowarn
+DLCPTH
+-f
+files.f
++UVM_TESTNAME=dut_test
++UVM_NO_RELNOTES

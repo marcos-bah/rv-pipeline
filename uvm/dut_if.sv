@@ -1,38 +1,13 @@
-`ifndef DUT_IF_SV
-`define DUT_IF_SV
+//=====================================================
+// dut_if.sv - Interface do Pipeline
+//=====================================================
+`timescale 1ns/1ps
+interface dut_if(input logic clk, input logic rst, input logic clk_load);
 
-interface dut_if(input logic clk);
-  
-  // Sinais de debug observados
-  logic [31:0] debug_WB;
-  logic [31:0] debug_ALUResult;
-  logic [31:0] debug_inst;
-  logic [4:0]  debug_WA;
-  logic        debug_RegWrite;
-  
-  // REMOVIDO: state (se não existir no seu DUT)
-  // Se precisar observar state interno, adicione como porta de debug no RTL
-  
-  // Clocking block para sincronização
-  clocking cb @(posedge clk);
-    input debug_WB;
-    input debug_ALUResult;
-    input debug_inst;
-    input debug_WA;
-    input debug_RegWrite;
-  endclocking
-  
-  // Modport para o monitor
-  modport monitor (
-    input clk,
-    input debug_WB,
-    input debug_ALUResult,
-    input debug_inst,
-    input debug_WA,
-    input debug_RegWrite,
-    clocking cb
-  );
-  
+    // Sinais para carregamento da memória de instruções / I/O do DUT
+    logic        we;            // habilita escrita na memória de instruções
+    logic [31:0] Instrucoes;    // dados para carregar na memória de instruções
+    logic [31:0] ADDR_INST;     // endereço de carregamento
+    logic [31:0] Dado;          // saída de dados derivada da memória RAM
+
 endinterface
-
-`endif // DUT_IF_SV

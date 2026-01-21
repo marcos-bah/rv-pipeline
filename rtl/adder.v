@@ -151,12 +151,13 @@ begin
  else begin
      state = 1;
      i = 31;
-     while (state==1)
-     begin
-     if(r_m[i]==1 || i == 0)
-     state = 0;
-     i = i-1;
-     end
+        for (int k = 31; k >= 0; k = k - 1) begin
+            if (r_m[k]) begin
+                i = k;
+                break;
+            end
+end
+
 
      r_exp = a_exp + i-22;
 

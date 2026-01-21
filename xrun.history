@@ -1,0 +1,2 @@
+#e1(20Jan2026:22:02:05): source ./xcelium.d/env.d/env.history.20Jan2026_22_02_05
+s1(20Jan2026:22:02:05):  xrun -uvmhome /apps/cds/XCELIUM2409/tools.lnx86/methodology/UVM/CDNS-1.2 -uvm -coverage all -sv -64bit -access +rwc -clean -nowarn DLCPTH -f files.f +UVM_TESTNAME=dut_test +UVM_NO_RELNOTES 

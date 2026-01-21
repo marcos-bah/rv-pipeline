@@ -31,8 +31,6 @@ NC          = \033[0m
 
 .PHONY: all clean test test_all help
 
-all: test_simple
-
 help:
 	@echo "============================================"
 	@echo "  Pipeline RISC-V - Makefile"
@@ -154,13 +152,6 @@ logs:
 	@echo "============================================"
 	@ls -la $(LOG_DIR)/*.log 2>/dev/null || echo "Nenhum log encontrado"
 
-clean:
-	@echo "$(YELLOW)[LIMPANDO]$(NC) Removendo arquivos gerados..."
-	@rm -rf $(BUILD_DIR)
-	@rm -f $(LOG_DIR)/*.log
-	@rm -f *.vcd
-	@echo "$(GREEN)[PRONTO]$(NC) Limpeza concluída"
-
 # ============================================
 # Waveform (GTKWave)
 # ============================================
@@ -168,3 +159,20 @@ clean:
 wave: test_topo
 	@echo "$(YELLOW)[ABRINDO]$(NC) GTKWave..."
 	@gtkwave topo_tb.vcd &
+
+# Makefile para simular com Xcelium (xrun)
+XRUN = xrun
+UVM_HOME=/apps/cds/XCELIUM2409/tools.lnx86/methodology/UVM/CDNS-1.2
+XRUN_FLAGS = -uvmhome $(UVM_HOME) -uvm -coverage all -sv -64bit -access +rwc -clean -nowarn DLCPTH
+
+# Arquivo contendo os modulos do projeto
+FILELIST = files.f
+
+all:
+	$(XRUN) $(XRUN_FLAGS) -f $(FILELIST) +UVM_TESTNAME=dut_test +UVM_NO_RELNOTES
+
+gui:
+	$(XRUN) $(XRUN_FLAGS) -f $(FILELIST) -gui +UVM_TESTNAME=dut_test +UVM_NO_RELNOTES
+
+clean:
+	rm -rf xrun.history xcelium.d INCA_libs *.log *.key *.shm *.vcd *.vpd worklib csrc

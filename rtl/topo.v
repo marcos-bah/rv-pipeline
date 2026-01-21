@@ -1,11 +1,8 @@
 module topo (
-    input clk, rst,
+    input clk, rst, we, clk_load,
+    input [31:0] Instrucoes, ADDR_INST,
     // Saídas para observação (necessárias para síntese)
-    output [31:0] debug_WB,       // Resultado do Write Back
-    output [31:0] debug_ALUResult, // Resultado da ALU
-    output [31:0] debug_inst,     // Instrução atual
-    output [4:0]  debug_WA,       // Endereço de escrita no RF
-    output        debug_RegWrite  // Write Enable do Register File
+    output [31:0] Dado
 );
 
 // CUIDAR COM TIPOS REG E WIRE, MANTER REGS NOS FF`S APENAS
@@ -26,7 +23,12 @@ InstructionFetch IF (
     .zeroFlag(zeroFlag),
     .branchFlag(Branch),
     .inst(inst),
-    .flush(flush)
+    .flush(flush),
+    .Instrucoes(Instrucoes),
+    .we(we),
+    .clk_load(clk_load),
+    .ADDR_INST(ADDR_INST)
+
 );
 
 // flip flop INST
@@ -248,7 +250,8 @@ Execute_Memory EXMEM (
     .zero(zeroFlag),
     .ReadData(ReadData),
     .muxpal_result(ALUResult),
-    .funct3(F3WIRE)
+    .funct3(F3WIRE),
+    .Dado(Dado)
 );
 
 // Atualização dos flip flops D e M (EX→MEM)
@@ -274,12 +277,5 @@ mux2x1_32bits muxout (
   .sel(RSWIRE),
   .out(WB)
 );
-
-// Conexão das saídas de debug para síntese
-assign debug_WB = WB;
-assign debug_ALUResult = ALUResult;
-assign debug_inst = inst;
-assign debug_WA = WA;
-assign debug_RegWrite = WER2WIRE;
 
 endmodule

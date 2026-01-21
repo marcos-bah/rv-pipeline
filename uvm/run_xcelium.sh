@@ -11,11 +11,10 @@ echo "Compiling and running UVM test: $TESTNAME"
 SRC_RTL="../rtl/*.v"
 
 # UVM sources - ordem de compilação importa!
-# 1. Interface
-# 2. Package (define tipos como dut_txn)
-# 3. Componentes UVM (dependem do package)
-# 4. Top-level testbench
-SRC_TB="./dut_if.sv ./tb_package.sv ./dut_txn.sv ./dut_seq.sv ./dut_sequencer.sv ./dut_predictor.sv ./dut_monitor.sv ./dut_scoreboard.sv ./dut_cov.sv ./dut_agent.sv ./dut_env.sv ./dut_test.sv ./tb_top.sv"
+# 1. Interface (dut_if.sv) - deve vir antes do package
+# 2. Package (tb_package.sv) - inclui todos os outros arquivos UVM na ordem correta
+# 3. Top-level testbench (tb_top.sv) - deve vir por último
+SRC_TB="./dut_if.sv ./tb_package.sv ./tb_top.sv"
 
 # xrun flags: -uvm habilita UVM library; -sv para SystemVerilog
 xrun -uvm -sv -access +rwc \

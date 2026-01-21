@@ -51,10 +51,10 @@ memory_write_first #(.DATA_WIDTH(8), .ADDRESS_WIDTH(4)) mem_byte3
     // MODO SIMULAÇÃO (Icarus Verilog) - Carrega dados de arquivo
     // =================================================================
     initial begin
-        $readmemh("/home/cidigital1/cidigital/rv-pipeline/mem/mem_byte0_init.txt", mem_byte0.mem);
-        $readmemh("/home/cidigital1/cidigital/rv-pipeline/mem/mem_byte1_init.txt", mem_byte1.mem);
-        $readmemh("/home/cidigital1/cidigital/rv-pipeline/mem/mem_byte2_init.txt", mem_byte2.mem);
-        $readmemh("/home/cidigital1/cidigital/rv-pipeline/mem/mem_byte3_init.txt", mem_byte3.mem);
+        $readmemh("/home/cidigital1/Documentos/rv-pipeline/mem/mem_byte0_init.txt", mem_byte0.mem);
+        $readmemh("/home/cidigital1/Documentos/rv-pipeline/mem/mem_byte1_init.txt", mem_byte1.mem);
+        $readmemh("/home/cidigital1/Documentos/rv-pipeline/mem/mem_byte2_init.txt", mem_byte2.mem);
+        $readmemh("/home/cidigital1/Documentos/rv-pipeline/mem/mem_byte3_init.txt", mem_byte3.mem);
     end
 `endif
     // MODO SÍNTESE: Memória não inicializada (dados virão em runtime)
