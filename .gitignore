@@ -1,6 +1,6 @@
 # Ignore build outputs and logs
-/build/
-/logs/
+build/
+logs/
 *.log
 *.vcd
 
@@ -28,20 +28,26 @@ synthesis/.rs_*
 genus.*
 fv/
 
-# Genus and synthesis logs/command files (some already covered above, keep explicit patterns)
+# Genus and synthesis logs/command files
 synthesis/genus.*
 synthesis/*.log*
 synthesis/*.cmd*
 
-# Anything else under synthesis that looks generated
+# Synthesis temp
 synthesis/tmp/
 synthesis/*.tmp
 
-#uvm 
-uvm/xcelium.d/*
-uvm/xrun.history
-
-xcelium.d/*
+# =============================================================================
+# UVM / Xcelium
+# =============================================================================
+xcelium.d/
 xrun.history
 xrun.key
-cov.work
+cov_work/
+*.ucd
+*.ucm
+
+# UVM subdir
+uvm/xcelium.d/
+uvm/xrun.history
+uvm/xrun.key
