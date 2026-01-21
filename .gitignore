@@ -36,3 +36,12 @@ synthesis/*.cmd*
 # Anything else under synthesis that looks generated
 synthesis/tmp/
 synthesis/*.tmp
+
+#uvm 
+uvm/xcelium.d/*
+uvm/xrun.history
+
+xcelium.d/*
+xrun.history
+xrun.key
+cov.work

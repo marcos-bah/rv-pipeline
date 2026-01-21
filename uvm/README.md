@@ -1,37 +1,57 @@
-# UVM testbench for topo.v
+# Ambiente UVM para Pipeline RISC-V
 
-This folder contains a minimal, well-documented UVM testbench for the `topo` DUT.
+Testbench UVM para verificação do pipeline `topo.v` com foco em operações ALU e Load/Store.
 
-Files:
-- `tb_package.sv`: common package and typedefs
-- `dut_if.sv`: virtual interface wrapped around DUT debug signals
-- `dut_txn.sv`: transaction class (sequence item)
-- `dut_sequencer.sv`, `dut_driver.sv`, `dut_monitor.sv`: agent components
-- `dut_agent.sv`: agent wrapper
-- `dut_predictor.sv`: reference model (placeholder)
-- `dut_scoreboard.sv`: scoreboard comparing observed vs expected
-- `dut_seq.sv`: example sequence(s)
-- `dut_cov.sv`: functional coverage (basic placeholder)
-- `dut_env.sv`: environment integrating all components
-- `dut_test.sv`: main UVM test
-- `tb_top.sv`: top-level testbench that instantiates DUT and starts UVM
-- `run_xcelium.sh`: helper script to run with Xcelium (xrun)
+## Estrutura de Arquivos
 
-Notes:
-- This is a minimal, documented starting point. The predictor and coverage are placeholders
-  and should be replaced/extended with a real golden model and detailed covergroups for
-  real verification goals.
-- To run with Xcelium, create a file list `files.f` listing RTL and TB sources (or adapt
-  `run_xcelium.sh` to directly pass files). Example `files.f`:
+| Arquivo | Descrição |
+|---------|-----------|
+| `tb_top.sv` | Topo do testbench (instancia DUT e inicia UVM) |
+| `dut_if.sv` | Interface virtual com sinais de debug |
+| `dut_txn.sv` | Transação (sequence item) |
+| `dut_seq.sv` | Sequências de teste (ALU, Load/Store) |
+| `dut_sequencer.sv` | Sequenciador |
+| `dut_driver.sv` | Driver (aplica estímulos) |
+| `dut_monitor.sv` | Monitor (observa sinais, detecta EBREAK) |
+| `dut_agent.sv` | Agent (agrupa sequencer, driver, monitor) |
+| `dut_predictor.sv` | Modelo de referência |
+| `dut_scoreboard.sv` | Scoreboard (compara esperado vs observado) |
+| `dut_cov.sv` | Cobertura funcional |
+| `dut_env.sv` | Ambiente UVM |
+| `dut_test.sv` | Teste principal |
+| `tb_package.sv` | Package com includes |
+| `run_xcelium.sh` | Script para Xcelium |
 
-  rtl/topo.v
-  uvm/*.sv
+## Sequências Disponíveis
 
-Then run:
+### `alu_sequence`
+Testa operações R-type: ADD, SUB, SLL, SLT, XOR, OR, AND
+
+### `load_store_sequence`
+Testa operações de memória: SW, LW
+
+## Execução
 
 ```bash
+# Teste completo (ALU + Load/Store)
 ./uvm/run_xcelium.sh dut_test
+
+# Apenas ALU
+./uvm/run_xcelium.sh dut_test +SEQ=alu
+
+# Apenas Load/Store
+./uvm/run_xcelium.sh dut_test +SEQ=ls
 ```
 
-If you prefer an open-source flow instead of Xcelium, consider using Verilator + cocotb;
-I can generate a cocotb testbench that mirrors this UVM structure.
+## Cobertura Funcional
+
+O `dut_cov.sv` coleta cobertura para:
+- **Opcode**: R-type, I-type, Load, Store
+- **Funct3**: Operação ALU específica
+- **Funct7**: Diferenciação ADD/SUB
+- **Registradores**: rd, rs1, rs2
+- **Cross coverage**: Combinações ALU, Load/Store
+
+## Padrão de Referência
+
+Baseado nas boas práticas do documento SD242 (Criação e Configuração de Ambiente UVM).
