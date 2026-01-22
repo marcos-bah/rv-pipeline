@@ -32,7 +32,9 @@ class dut_scoreboard extends uvm_component;
     // Recebe transacao esperada
     // -------------------------------
     function void write_expected(dut_txn tx);
-        exp_q.push_back(tx);
+        if (tx.is_storage()) begin
+            exp_q.push_back(tx);
+        end
     endfunction
     
     // -------------------------------
@@ -40,8 +42,14 @@ class dut_scoreboard extends uvm_component;
     // -------------------------------
     function void write_actual(dut_txn tx);
         dut_txn exp;
+
+        // FILTRO DE SAÍDA: 
+        if (!tx.is_storage()) begin
+            return; 
+        end
+
         if (exp_q.size() == 0) begin
-            `uvm_error("SCOREBOARD", "Transacao observada sem referencia esperada")
+            `uvm_error("SCOREBOARD", "Transacao de Storage observada sem referencia esperada na fila")
             errors++;
             return;
         end
@@ -49,15 +57,18 @@ class dut_scoreboard extends uvm_component;
         exp = exp_q.pop_front();
         total_compares++;
         
+        // Compara o Dado observado (tx) com o Dado esperado (exp)
         if (tx.Dado !== exp.Dado) begin
             errors++;
             `uvm_error("SCOREBOARD",
                 $sformatf(
-                    "Mismatch: esperado=%08x observado=%08x ciclo=%0d",
+                    "Mismatch na Instrucao de Storage! \nEsperado (Modelo): %08x \nObservado (DUT):   %08x \nCiclo: %0d",
                     exp.Dado,
                     tx.Dado,
                     tx.cycle
                 ))
+        end else begin
+            `uvm_info("SCOREBOARD", $sformatf("Match Storage OK: %08x", tx.Dado), UVM_HIGH)
         end
     endfunction
     

@@ -3,26 +3,23 @@
 // Do not modify this file
 //
 -INPUT
-"@source /apps/cds/XCELIUM2409/tools.lnx86/methodology/UVM/CDNS-1.2/additions/sv/files/tcl/uvm_sim.tcl"
-+UVM_NO_RELNOTES
+"@source /apps/cds/XCELIUM2409/tools/methodology/UVM/CDNS-1.1d/additions/sv/files/tcl/uvm_sim.tcl"
 +incdir+./uvm
 +incdir+./rtl
 -uvmhome
-/apps/cds/XCELIUM2409/tools.lnx86/methodology/UVM/CDNS-1.2
+/apps/cds/XCELIUM2409/tools/methodology/UVM/CDNS-1.1d
 -sv_lib
-/apps/cds/XCELIUM2409/tools.lnx86/methodology/UVM/CDNS-1.2/additions/sv/lib/64bit/libuvmpli.so
--NOWARN
-DLCPTH
+/apps/cds/XCELIUM2409/tools/methodology/UVM/CDNS-1.1d/additions/sv/lib/64bit/libuvmpli.so
 +UVM_TESTNAME=dut_test
 -COVOVERWRITE
 -MESSAGES
 -RUN
 -SV_LIB
-/apps/cds/XCELIUM2409/tools.lnx86/methodology/UVM/CDNS-1.2/additions/sv/lib/64bit/libuvmdpi.so
+/apps/cds/XCELIUM2409/tools/methodology/UVM/CDNS-1.1d/additions/sv/lib/64bit/libuvmdpi.so
 +EMGRLOG
 xrun.log
 -XLSTIME
-1768957325
+1769025091
 -XLKEEP
 -XLMODE
 ./xcelium.d/run.lnx8664.24.09.d
@@ -34,4 +31,4 @@ xrun.log
 -XLNAME
 xrun
 -XLVERSION
-"TOOL:	xrun(64)	24.09-s001"
+"TOOL:	xrun(64)	24.09-s002"

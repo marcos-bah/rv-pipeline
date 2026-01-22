@@ -3,19 +3,12 @@
 // Do not modify this file
 //
 -RUNMODE
--sv
--NOWARN
-DLCPTH
--INCDIR
-./uvm
--INCDIR
-./rtl
 -I_INCDIR
-/apps/cds/XCELIUM2409/tools.lnx86/methodology/UVM/CDNS-1.2/sv/src
+/apps/cds/XCELIUM2409/tools/methodology/UVM/CDNS-1.1d/sv/src
 -DEFINE
 USE_PARAMETERIZED_WRAPPER
 -I_INCDIR
-/apps/cds/XCELIUM2409/tools.lnx86/methodology/UVM/CDNS-1.2/additions/sv
+/apps/cds/XCELIUM2409/tools/methodology/UVM/CDNS-1.1d/additions/sv
 -UPDATE
 -CDSLIB
 ./xcelium.d/run.lnx8664.24.09.d/cdsrun.lib
@@ -26,5 +19,5 @@ worklib
 -UVMNOSINGLESTEP
 -define
 UVM_PLI
-/apps/cds/XCELIUM2409/tools.lnx86/methodology/UVM/CDNS-1.2/sv/src/uvm_pkg.sv
-/apps/cds/XCELIUM2409/tools.lnx86/methodology/UVM/CDNS-1.2/additions/sv/cdns_uvm_pkg.sv
+/apps/cds/XCELIUM2409/tools/methodology/UVM/CDNS-1.1d/sv/src/uvm_pkg.sv
+/apps/cds/XCELIUM2409/tools/methodology/UVM/CDNS-1.1d/additions/sv/cdns_uvm_pkg.sv

@@ -2,14 +2,13 @@
 // File created by:  xrun
 // Do not modify this file
 //
--sv
 -INCDIR
 ./uvm
 -INCDIR
 ./rtl
 -I_INCDIR
-/apps/cds/XCELIUM2409/tools.lnx86/methodology/UVM/CDNS-1.2/sv/src
+/apps/cds/XCELIUM2409/tools/methodology/UVM/CDNS-1.1d/sv/src
 -DEFINE
 USE_PARAMETERIZED_WRAPPER
 -I_INCDIR
-/apps/cds/XCELIUM2409/tools.lnx86/methodology/UVM/CDNS-1.2/additions/sv
+/apps/cds/XCELIUM2409/tools/methodology/UVM/CDNS-1.1d/additions/sv

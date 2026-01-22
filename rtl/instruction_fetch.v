@@ -33,7 +33,7 @@ PC pc (
 
 always @ (*)
 begin
-    $display("PC: %h, next_PC: %h, we: %b", PC, next_PC, we);
+    // $display("PC: %h, next_PC: %h, we: %b, addr: %h", PC, next_PC, we, ADDR_INST);
     if (we == 0) begin
         if ((branchFlag == 1) & (zeroFlag == 1))
         begin

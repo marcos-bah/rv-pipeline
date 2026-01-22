@@ -26,7 +26,7 @@ module instruction_memory (
     assign aux = A[31:2];
 
     initial begin
-        $readmemh("/home/cidigital1/Documentos/rv-pipeline/programs/instructions.txt", instruction);
+        $readmemh("/home/aluno/Documentos/rv-pipeline/programs/instructions.txt", instruction);
     end
 
     assign RD = instruction[aux];
@@ -36,6 +36,11 @@ module instruction_memory (
         if (we) begin
             instruction[aux] <= Instrucoes;
         end
+    end
+
+    always @ (*)
+    begin
+        // $display("RD: %h, aux: %h, A: %h", RD, aux, A);
     end
 `endif
 

@@ -12,7 +12,7 @@ module topo_tb ();
     // Instanciação do DUT
     topo DUT (
         .clk(clk),
-        .clk_load(clk_load)
+        .clk_load(clk_load),
         .rst(rst),
         .we(we),
         .ADDR_INST(ADDR_INST),

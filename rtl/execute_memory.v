@@ -69,19 +69,7 @@ module Execute_Memory (
     .sel(DSrc),
     .out(muxpal_result)
   );
-// instanciar dois muxes, um para a entrada da memória (decide se pega o dado de B ou fB), outro para a saida até o ff D (Decide se o dado vem da ULA ou FPU)
-// instanciar FPU com entrada dos novos sinais de input
 
-// em análise diagonal, 4 wires de 32 bits novos serão utilizados(para entrada e saída dos muxes), ver quais no esquemático
-
-/*  data_memory dmemory (
-    .clk(clk),
-    .A(muxpal_result),
-    .WD(Write_muxmem),
-    .WE(MemWrite),
-    .RD(ReadData)
-  );
-*/
 // Endereço já vem em bytes do ALU, memória faz addr[5:2] internamente
 assign deslocado = muxpal_result[5:0];
 

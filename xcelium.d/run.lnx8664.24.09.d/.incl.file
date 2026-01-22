@@ -7,9 +7,6 @@
 ./macros/uvm_version.svh
 ./uvm/macros/uvm_version.svh
 ./rtl/macros/uvm_version.svh
-./macros/uvm_global_defines.svh
-./uvm/macros/uvm_global_defines.svh
-./rtl/macros/uvm_global_defines.svh
 ./macros/uvm_message_defines.svh
 ./uvm/macros/uvm_message_defines.svh
 ./rtl/macros/uvm_message_defines.svh

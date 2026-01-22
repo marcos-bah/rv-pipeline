@@ -8,9 +8,6 @@
 -UVMNOSINGLESTEP
 -define
 UVM_PLI
--sv
--NOWARN
-DLCPTH
 -INCDIR
 ./uvm
 -INCDIR
@@ -50,11 +47,11 @@ rtl/ula_decoder.v
 -HDLVAR
 ./xcelium.d/run.lnx8664.24.09.d/hdlrun.var
 -I_INCDIR
-/apps/cds/XCELIUM2409/tools.lnx86/methodology/UVM/CDNS-1.2/sv/src
+/apps/cds/XCELIUM2409/tools/methodology/UVM/CDNS-1.1d/sv/src
 -DEFINE
 USE_PARAMETERIZED_WRAPPER
 -I_INCDIR
-/apps/cds/XCELIUM2409/tools.lnx86/methodology/UVM/CDNS-1.2/additions/sv
+/apps/cds/XCELIUM2409/tools/methodology/UVM/CDNS-1.1d/additions/sv
 -no_analogsolver
 -MESSAGES
 -UPDATE

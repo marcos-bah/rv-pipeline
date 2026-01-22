@@ -147,27 +147,28 @@ endfunction
 function void report_phase(uvm_phase phase);
     real cov_total;
     super.report_phase(phase);
-    
     cov_total = inst_cg.get_coverage();
-    
-    `uvm_info("COVERAGE_REPORT", $sformatf(
-        "\n==================== COBERTURA ====================\n" +
-        "Total:       %6.2f%%\n" +
-        "Opcode:      %6.2f%%\n" +
-        "Funct3:      %6.2f%%\n" +
-        "Funct7:      %6.2f%%\n" +
-        "Rd:          %6.2f%%\n" +
-        "Rs1:         %6.2f%%\n" +
-        "Rs2:         %6.2f%%\n" +
-        "===================================================",
-        cov_total,
-        inst_cg.cp_opcode.get_coverage(),
-        inst_cg.cp_funct3.get_coverage(),
-        inst_cg.cp_funct7.get_coverage(),
-        inst_cg.cp_rd.get_coverage(),
-        inst_cg.cp_rs1.get_coverage(),
-        inst_cg.cp_rs2.get_coverage()
-    ), UVM_LOW);
+    `uvm_info("COVERAGE_REPORT",
+        $sformatf({"\n==================== COBERTURA ====================\n",
+                   "Total:       %6.2f%%\n",
+                   "Opcode:      %6.2f%%\n",
+                   "Funct3:      %6.2f%%\n",
+                   "Funct7:      %6.2f%%\n",
+                   "Rd:          %6.2f%%\n",
+                   "Rs1:         %6.2f%%\n",
+                   "Rs2:         %6.2f%%\n",
+                   "===================================================\n"},
+            cov_total,
+            inst_cg.cp_opcode.get_coverage(),
+            inst_cg.cp_funct3.get_coverage(),
+            inst_cg.cp_funct7.get_coverage(),
+            inst_cg.cp_rd.get_coverage(),
+            inst_cg.cp_rs1.get_coverage(),
+            inst_cg.cp_rs2.get_coverage()
+        ),
+        UVM_LOW
+    );
 endfunction
+
 
 endclass

@@ -1,7 +1,4 @@
-//! @brief FPU simples de 32-bits para RISC-V
- //! @details Implementa: Soma, Subtracao ,
- //! Multiplicacao e conversao
- //! int2fp e fp2int.
+
  module FPU(A,B,sel,Result);
 
  input [31:0] A; //! Operando A
